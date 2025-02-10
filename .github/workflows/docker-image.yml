@@ -28,23 +28,3 @@ jobs:
 
     - name: Show logs (optional for debugging)
       run: docker-compose logs
-
-    - name: Install ngrok
-      run: |
-        curl -s https://ngrok-agent.s3.amazonaws.com/ngrok.asc | sudo tee /etc/apt/trusted.gpg.d/ngrok.asc >/dev/null
-        echo "deb https://ngrok-agent.s3.amazonaws.com buster main" | sudo tee /etc/apt/sources.list.d/ngrok.list
-        sudo apt update && sudo apt install ngrok -y
-
-    - name: Authenticate ngrok
-      run: ngrok config add-authtoken ${{ secrets.NGROK_AUTH_TOKEN }}
-
-    - name: Start Ngrok in Detached Mode
-      run: |
-        nohup ngrok http 80 --log=stdout > ngrok.log 2>&1 &  # Start ngrok detached
-        sleep 5  # Give it time to start
-        PUBLIC_URL=$(curl -s http://localhost:4040/api/tunnels | jq -r '.tunnels[0].public_url')
-        echo "🚀 Public URL: $PUBLIC_URL"
-        echo "::set-output name=NGROK_URL::$PUBLIC_URL"
-
-    - name: Finish Workflow (But Ngrok Stays Alive)
-      run: echo "GitHub Action finished, but ngrok is still running!"
