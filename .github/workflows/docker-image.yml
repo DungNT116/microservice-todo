@@ -15,14 +15,21 @@ jobs:
     - name: Check out the repository
       uses: actions/checkout@v4
 
-    - name: Set up Docker Buildx
-      uses: docker/setup-buildx-action@v2
+    - name: Set up Docker
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y docker-compose-plugin
+
+    - name: Verify Docker and Docker Compose installation
+      run: |
+        docker --version
+        docker compose version
 
     - name: Build and start services
-      run: docker-compose up --build -d
+      run: docker compose up --build -d
 
     - name: List running containers
       run: docker ps -a
 
     - name: Show logs (optional for debugging)
-      run: docker-compose logs
+      run: docker compose logs
