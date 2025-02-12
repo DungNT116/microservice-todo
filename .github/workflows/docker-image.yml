@@ -21,14 +21,8 @@ jobs:
         docker-compose --version
 
     - name: Build and start services
-      run: docker-compose up --build -d
-
-    - name: Get Container URL
-      run: |
-        CONTAINER_ID=$(docker ps -q | head -n 1)
-        PORT=$(docker inspect --format='{{(index (index .NetworkSettings.Ports "80/tcp") 0).HostPort}}' $CONTAINER_ID)
-        echo "Application is running on http://localhost:$PORT"
-
+      run: docker-compose up --build -d 
+      
     - name: Install and Run ngrok
       env:
         NGROK_AUTH_TOKEN: ${{ secrets.NGROK_AUTH_TOKEN }}
