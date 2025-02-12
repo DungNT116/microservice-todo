@@ -23,8 +23,8 @@ jobs:
     - name: Build and start services
       run: docker-compose up --build -d
 
-    - name: Install dependencies (jq for parsing JSON)
-      run: sudo apt update && sudo apt install -y jq
+    - name: Install dependencies (jq & tmux)
+      run: sudo apt update && sudo apt install -y jq tmux
 
     - name: Install and Configure ngrok
       env:
@@ -37,15 +37,15 @@ jobs:
         # Authenticate ngrok
         ngrok config add-authtoken "$NGROK_AUTH_TOKEN"
 
-    - name: Start ngrok Tunnel
+    - name: Start ngrok Tunnel (Prevent Termination)
       env:
         NGROK_REGION: us  # Change this if needed
       run: |
-        # Start ngrok in the background and keep it alive
-        nohup ngrok http 80 --region=$NGROK_REGION > ngrok.log 2>&1 &
-        sleep 10  # Wait for ngrok to establish a connection
+        # Start a detached tmux session for ngrok
+        tmux new-session -d -s ngrok_session "ngrok http 80 --region=$NGROK_REGION"
+        sleep 10  # Allow time for ngrok to start
 
-    - name: Get ngrok URL
+    - name: Get ngrok Public URL
       run: |
         # Extract the public URL from ngrok
         NGROK_URL=$(curl -s http://127.0.0.1:4040/api/tunnels | jq -r '.tunnels[0].public_url')
