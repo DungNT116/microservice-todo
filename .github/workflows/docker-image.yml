@@ -37,9 +37,9 @@ jobs:
         # Authenticate ngrok
         ngrok config add-authtoken "$NGROK_AUTH_TOKEN"
 
-    - name: Start ngrok Tunnel
+    - name: Start ngrok Tunnel (With Header Bypass)
       run: |
-        nohup ngrok http 80 --region=us > ngrok.log 2>&1 &
+        nohup ngrok http 80 --region=us --metadata="ngrok-skip-browser-warning:true" > ngrok.log 2>&1 &
         sleep 10  # Allow ngrok to start
 
     - name: Get ngrok Public URL
