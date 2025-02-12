@@ -29,7 +29,6 @@ jobs:
         PORT=$(docker inspect --format='{{(index (index .NetworkSettings.Ports "80/tcp") 0).HostPort}}' $CONTAINER_ID)
         echo "Application is running on http://localhost:$PORT"
 
-    
     - name: Install and Run ngrok
       env:
         NGROK_AUTH_TOKEN: ${{ secrets.NGROK_AUTH_TOKEN }}
